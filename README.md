@@ -1,6 +1,5 @@
-# Pharmacy E-Commerce Backend
 
-Backend API สำหรับระบบ E-Commerce ร้านขายยา พัฒนาด้วย Node.js, Express และ MongoDB
+Backend API สำหรับระบบ E-Commerce พัฒนาด้วย Node.js, Express และ MongoDB
 
 ## 📋 สารบัญ
 
