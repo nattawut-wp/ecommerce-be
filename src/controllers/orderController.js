@@ -4,6 +4,7 @@ import {
   allOrdersService,
   userOrdersService,
   updateOrderStatusService,
+  getStripeDashboardStats,
 } from "../services/orderService.js";
 import { validateOrderInput } from "../validators/orderValidator.js";
 import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utills/constants.js";
@@ -115,4 +116,21 @@ const updateStatus = async (req, res) => {
   }
 };
 
-export { verifyStripe, placeOrderStripe, allOrders, userOrders, updateStatus };
+const getStripeStats = async (req, res) => {
+  try {
+    const stats = await getStripeDashboardStats();
+    res.json({ success: true, stats });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export {
+  verifyStripe,
+  placeOrderStripe,
+  allOrders,
+  userOrders,
+  updateStatus,
+  getStripeStats,
+};

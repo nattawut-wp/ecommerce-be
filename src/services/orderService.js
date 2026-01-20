@@ -204,10 +204,43 @@ const updateOrderStatusService = async (orderId, status) => {
   }
 };
 
+/**
+ * ดึงข้อมูลสถิติสำหรับ Dashboard
+ * Get dashboard stats (Total sales, Balance, etc.)
+ *
+ * @returns {Promise<Object>} ข้อมูลสถิติ
+ */
+const getStripeDashboardStats = async () => {
+  try {
+    // 1. ดึงยอดเงินคงเหลือจาก Stripe
+    const balance = await stripe.balance.retrieve();
+    const availableBalance = balance.available[0].amount / 100; // แปลงเป็นบาท
+
+    // 2. คำนวณยอดขายรวมจากคำสั่งซื้อที่ชำระเงินแล้วในระบบ
+    const orders = await orderModel.find({ payment: true });
+    const totalSales = orders.reduce((sum, order) => sum + order.amount, 0);
+
+    // 3. นับจำนวนคำสั่งซื้อที่รอดำเนินการ (ยังไม่ส่ง)
+    const pendingOrders = await orderModel.countDocuments({
+      status: { $ne: "Delivered" },
+    });
+
+    return {
+      totalSales,
+      availableBalance,
+      pendingOrders,
+      totalOrders: orders.length,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   placeOrderStripeService,
   verifyStripeService,
   allOrdersService,
   userOrdersService,
   updateOrderStatusService,
+  getStripeDashboardStats,
 };

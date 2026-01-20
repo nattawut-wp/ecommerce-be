@@ -2,27 +2,6 @@ import userModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { RESPONSE_MESSAGES } from "../utills/constants.js";
 
-/**
- * ลงทะเบียนผู้ใช้ใหม่
- * Register new user
- *
- * หน้าที่:
- * 1. ตรวจสอบว่าอีเมลซ้ำหรือไม่
- * 2. Hash password ด้วย bcrypt (salt rounds = 10)
- * 3. สร้าง user ใหม่ในฐานข้อมูล
- * 4. Return user object
- *
- * Security:
- * - Password จะถูก hash ก่อนบันทึก (ไม่เคยเก็บ plain text)
- * - ใช้ bcrypt.genSalt(10) เพื่อสร้าง salt
- * - Hash เป็น one-way function (ไม่สามารถ decrypt กลับได้)
- *
- * @param {string} name - ชื่อผู้ใช้
- * @param {string} email - อีเมล (ต้องไม่ซ้ำ)
- * @param {string} password - รหัสผ่าน plain text
- * @returns {Promise<Object>} user object (ไม่รวม password)
- * @throws {Error} ถ้าอีเมลมีอยู่แล้ว
- */
 const registerUserService = async (name, email, password) => {
   try {
     // 1. ตรวจสอบว่าอีเมลมีในระบบแล้วหรือไม่

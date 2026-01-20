@@ -93,25 +93,48 @@ const authUser = async (req, res, next) => {
 
 const authAdmin = async (req, res, next) => {
   try {
-    // 1. เรียก authUser เพื่อตรวจสอบ authentication ก่อน
-    await authUser(req, res, () => {});
-    await authUser(req, res, () => {});
-    // 2. ตรวจสอบว่า authUser ผ่านหรือไม่ (ถ้าไม่ผ่าน authUser จะ return ก่อน)
-    if (!req.user) {
-      return;
+    // ใช้ logic ของ authUser โดยตรงเพื่อหลีกเลี่ยงการเรียกซ้ำซ้อน
+    const token = extractToken(req.headers);
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Not Authorized - Please login",
+      });
     }
-    // 3. ตรวจสอบว่า user มี role เป็น admin หรือไม่
-    if (req.user.role !== "admin") {
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id || decoded._id || decoded.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token - No user ID found",
+      });
+    }
+
+    const user = await userModel.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (user.role !== "admin") {
       return res.status(403).json({
         success: false,
         message: "Access Denied - Admin access required",
       });
     }
-    // 4. ผ่านการตรวจสอบทั้งหมด ไปต่อที่ admin controller
+
+    req.user = user;
+    req.userId = userId;
     next();
   } catch (error) {
     console.error("Admin authentication error:", error.message);
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
       message: "Authorization failed",
     });

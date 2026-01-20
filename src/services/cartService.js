@@ -105,18 +105,14 @@ const addToCartService = async (userId, itemId, size) => {
  * Update cart item quantity
  *
  * หน้าที่:
- * - เปลี่ยนจำนวนสินค้าในตะกร้าตามที่กำหนด
- * - ถ้ามีอยู่แล้ว: เพิ่มจำนวนตามที่ระบุ (quantity สามารถเป็นลบได้)
- * - ถ้ายังไม่มี: ตั้งจำนวนตามที่ระบุ
- *
- * Note: quantity สามารถเป็น:
- * - บวก (+) = เพิ่มจำนวน
- * - ลบ (-) = ลดจำนวน (แต่ต้อง validate ไม่ให้ติดลบก่อนเรียก function นี้)
+ * - ตั้งค่าจำนวนสินค้าในตะกร้าตามที่กำหนด
+ * - ถ้ามีอยู่แล้ว: ตั้งค่าจำนวนใหม่ตามที่ระบุ
+ * - ถ้ายังไม่มี: สร้างใหม่และตั้งจำนวนตามที่ระบุ
  *
  * @param {string} userId - ID ของผู้ใช้
  * @param {string} itemId - ID ของสินค้า
  * @param {string} size - ขนาดที่เลือก
- * @param {number} quantity - จำนวนที่ต้องการเปลี่ยน (สามารถเป็นบวกหรือลบ)
+ * @param {number} quantity - จำนวนที่ต้องการตั้งค่า (ค่าใหม่ไม่ใช่ค่าที่ต้องการเพิ่ม/ลด)
  * @returns {Promise<Object>} { message: "Cart Updated" }
  * @throws {Error} ถ้าไม่พบ user
  */
@@ -132,20 +128,11 @@ const updateCartService = async (userId, itemId, size, quantity) => {
     // 2. ดึง cartData
     let cartData = userData.cartData || {};
 
-    // 3. อัพเดตจำนวน
-    if (cartData[itemId]) {
-      if (cartData[itemId][size]) {
-        // มีอยู่แล้ว -> เพิ่ม/ลด ตามจำนวนที่กำหนด
-        cartData[itemId][size] += quantity;
-      } else {
-        // ขนาดนี้ยังไม่มี -> ตั้งค่าใหม่
-        cartData[itemId][size] = quantity;
-      }
-    } else {
-      // สินค้านี้ยังไม่มีในตะกร้า -> สร้างใหม่
+    // 3. ตั้งค่าจำนวน (SET ไม่ใช่ ADD)
+    if (!cartData[itemId]) {
       cartData[itemId] = {};
-      cartData[itemId][size] = quantity;
     }
+    cartData[itemId][size] = quantity;
 
     // 4. บันทึกการเปลี่ยนแปลง
     await userModel.findByIdAndUpdate(userId, { cartData });
@@ -156,18 +143,18 @@ const updateCartService = async (userId, itemId, size, quantity) => {
 };
 
 /**
- * ลดจำนวนสินค้าในตะกร้า (ลบ 1 ชิ้น)
- * Delete/decrease item from cart
+ * ลบสินค้าออกจากตะกร้า
+ * Delete item from cart
  *
  * หน้าที่:
- * - ลดจำนวนสินค้าลง 1 ชิ้น
- * - ถ้าจำนวนเหลือ 0 หรือติดลบ ควรจะลบ item นั้นออกจากตะกร้า
+ * - ลบสินค้า (ตาม size ที่ระบุ) ออกจากตะกร้าทั้งหมด
+ * - ถ้าสินค้า itemId ไม่มี size อื่นเหลือ ให้ลบ itemId ออกด้วย
  *
- * Note: Function นี้มีบาง logic ที่อาจไม่ถูกต้อง (line 87-94)
- * - ควรจะลบ item ออกถ้าจำนวนเป็น 0
- * - ไม่ควรสร้าง item ใหม่ถ้ายังไม่มีในตะกร้า
- *
-
+ * @param {string} userId - ID ของผู้ใช้
+ * @param {string} itemId - ID ของสินค้า
+ * @param {string} size - ขนาดที่ต้องการลบ
+ * @returns {Promise<Object>} { message: "Cart Cleared" }
+ * @throws {Error} ถ้าไม่พบ user
  */
 const deleteFromCartService = async (userId, itemId, size) => {
   try {
@@ -181,21 +168,15 @@ const deleteFromCartService = async (userId, itemId, size) => {
     // 2. ดึง cartData
     let cartData = userData.cartData || {};
 
-    // 3. ลดจำนวนสินค้า
-    if (cartData[itemId]) {
-      if (cartData[itemId][size]) {
-        // มีอยู่แล้ว -> ลดจำนวนลง 1
-        cartData[itemId][size] -= 1;
-      } else {
-        // ขนาดนี้ไม่มี -> ไม่ควรทำอะไร (หรือควร throw error)
-        // TODO: Fix logic - ไม่ควรสร้างใหม่
-        cartData[itemId][size] = 1;
+    // 3. ลบสินค้าออกจากตะกร้า
+    if (cartData[itemId] && cartData[itemId][size]) {
+      // ลบ size นี้ออกจาก item
+      delete cartData[itemId][size];
+
+      // ถ้า item นี้ไม่มี size อื่นเหลือ ให้ลบ item ออกด้วย
+      if (Object.keys(cartData[itemId]).length === 0) {
+        delete cartData[itemId];
       }
-    } else {
-      // สินค้านี้ไม่มีในตะกร้า -> ไม่ควรทำอะไร
-      // TODO: Fix logic - ไม่ควรสร้างใหม่
-      cartData[itemId] = {};
-      cartData[itemId][size] = 1;
     }
 
     // 4. บันทึกการเปลี่ยนแปลง
