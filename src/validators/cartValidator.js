@@ -1,4 +1,4 @@
-// ตรวจสอบข้อมูลตะกร้าสินค้า
+// validate cart input
 const validateCartInput = (userId, itemId, size) => {
   const errors = [];
 
@@ -20,7 +20,7 @@ const validateCartInput = (userId, itemId, size) => {
   };
 };
 
-// ตรวจสอบข้อมูลการอัพเดตตะกร้า
+// validate update cart input
 const validateUpdateCartInput = (userId, itemId, size, quantity) => {
   const errors = [];
 

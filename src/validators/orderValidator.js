@@ -1,4 +1,4 @@
-// ตรวจสอบข้อมูลสำหรับการสั่งซื้อ
+// validate order input
 const validateOrderInput = (userId, items, amount, address) => {
   const errors = [];
 
