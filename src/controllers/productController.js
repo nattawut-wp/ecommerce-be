@@ -7,6 +7,7 @@ import {
 import { HTTP_STATUS } from "../utills/constants.js";
 import { validateProductInput } from "../validators/productValidator.js";
 
+// add product
 const addProductController = async (req, res) => {
   try {
     const { name, description, price, category, subCategory, sizes } = req.body;
@@ -24,7 +25,7 @@ const addProductController = async (req, res) => {
         errors: validation.errors,
       });
     }
-
+    // handle images
     let images = [];
     if (req.files) {
       const { image1, image2, image3, image4 } = req.files;
@@ -43,6 +44,7 @@ const addProductController = async (req, res) => {
   }
 };
 
+// list product
 const listProductsController = async (req, res) => {
   try {
     const products = await listProductsService();
@@ -55,6 +57,7 @@ const listProductsController = async (req, res) => {
   }
 };
 
+// get product by id
 const getProductByIdController = async (req, res) => {
   try {
     const product = await getProductByIdService(req.params.id);
@@ -67,6 +70,7 @@ const getProductByIdController = async (req, res) => {
   }
 };
 
+// delete product
 const deleteProductController = async (req, res) => {
   try {
     const product = await deleteProductService(req.params.id);

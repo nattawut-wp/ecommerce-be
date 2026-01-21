@@ -1,106 +1,75 @@
+# Backend API for E-Commerce System / ระบบ Backend API สำหรับระบบ E-Commerce
 
-Backend API สำหรับระบบ E-Commerce พัฒนาด้วย Node.js, Express และ MongoDB
+Backend API developed with Node.js, Express, and MongoDB.
+ระบบ Backend API พัฒนาด้วย Node.js, Express และ MongoDB
 
-## 📋 สารบัญ
+## Table of Contents / สารบัญ
 
-- [คุณสมบัติ](#คุณสมบัติ)
-- [เทคโนโลยีที่ใช้](#เทคโนโลยีที่ใช้)
-- [โครงสร้างโปรเจค](#โครงสร้างโปรเจค)
-- [การติดตั้ง](#การติดตั้ง)
-- [การตั้งค่า Environment Variables](#การตั้งค่า-environment-variables)
-- [การรันโปรเจค](#การรันโปรเจค)
+- [Features / คุณสมบัติ](#features--คุณสมบัติ)
+- [Technologies Used / เทคโนโลยีที่ใช้](#technologies-used--เทคโนโลยีที่ใช้)
+- [Project Structure / โครงสร้างโปรเจค](#project-structure--โครงสร้างโปรเจค)
+- [Installation / การติดตั้ง](#installation--การติดตั้ง)
+- [Environment Variables / การตั้งค่า Environment Variables](#environment-variables--การตั้งค่า-environment-variables)
+- [Running the Project / การรันโปรเจค](#running-the-project--การรันโปรเจค)
 - [API Endpoints](#api-endpoints)
-- [การจัดการไฟล์](#การจัดการไฟล์)
+- [File Management / การจัดการไฟล์](#file-management--การจัดการไฟล์)
+- [Response Format / รูปแบบการตอบกลับ](#response-format--รูปแบบการตอบกลับ)
 
-## ✨ คุณสมบัติ
+## Features / คุณสมบัติ
 
-### User Management
+### User Management / การจัดการผู้ใช้
 
-- 🔐 สมัครสมาชิก / เข้าสู่ระบบ (Register/Login)
-- 👤 จัดการข้อมูลผู้ใช้
-- 🔑 JWT Authentication
-- 👑 Admin Role Management
+- Register / Login: สมัครสมาชิกและเข้าสู่ระบบ
+- User Profile Management: จัดการข้อมูลส่วนตัว
+- JWT Authentication: ยืนยันตัวตนด้วย JSON Web Token
+- Admin Role Management: การจัดการสิทธิ์ผู้ดูแลระบบ
 
-### Product Management
+### Product Management / การจัดการสินค้า
 
-- 📦 เพิ่ม/แก้ไข/ลบสินค้า
-- 🖼️ อัพโหลดรูปภาพสินค้าผ่าน Cloudinary
-- 📝 จัดการข้อมูลสินค้า (ชื่อ, ราคา, หมวดหมู่, ฯลฯ)
+- CRUD Operations: เพิ่ม แก้ไข และลบสินค้า
+- Image Upload via Cloudinary: อัพโหลดรูปภาพผ่าน Cloudinary
+- Product Details: จัดการข้อมูลสินค้า (ชื่อ, ราคา, หมวดหมู่, ฯลฯ)
 
-### Shopping Cart
+### Shopping Cart / ตะกร้าสินค้า
 
-- 🛒 เพิ่ม/ลบสินค้าในตะกร้า
-- 📊 แสดงรายการสินค้าในตะกร้า
-- 🔄 อัพเดทจำนวนสินค้า
+- Add/Remove items: เพิ่มและลบสินค้าในตะกร้า
+- View Cart items: แสดงรายการสินค้าในตะกร้า
+- Update quantity: อัพเดทจำนวนสินค้า
 
-### Order Management
+### Order Management / การจัดการคำสั่งซื้อ
 
-- 💳 สั่งซื้อสินค้า (Cash on Delivery / Stripe Payment)
-- 📋 ดูประวัติการสั่งซื้อ
-- 🔄 อัพเดทสถานะคำสั่งซื้อ (Admin)
-- 📊 ดูคำสั่งซื้อทั้งหมด (Admin)
+- Checkout Options: ชำระเงินปลายทาง (COD) และ Stripe
+- Order History: ดูประวัติการสั่งซื้อ
+- Update Order Status (Admin): อัพเดทสถานะคำสั่งซื้อ (สำหรับ Admin)
+- View All Orders (Admin): ดูคำสั่งซื้อทั้งหมด (สำหรับ Admin)
 
-## 🛠️ เทคโนโลยีที่ใช้
+## Technologies Used / เทคโนโลยีที่ใช้
 
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MongoDB (Mongoose)
-- **Authentication:** JWT (jsonwebtoken)
-- **Password Hashing:** bcrypt
-- **File Upload:** Multer
-- **Cloud Storage:** Cloudinary
-- **Payment:** Stripe
-- **Validation:** Validator.js
-- **Environment Variables:** dotenv
-- **Dev Tools:** Nodemon
+- Runtime: Node.js
+- Framework: Express.js
+- Database: MongoDB (Mongoose)
+- Authentication: JWT (jsonwebtoken)
+- Password Hashing: bcrypt
+- File Upload: Multer
+- Cloud Storage: Cloudinary
+- Payment: Stripe
+- Validation: Validator.js
+- Environment Variables: dotenv
+- Dev Tools: Nodemon
 
-## 📁 โครงสร้างโปรเจค
+## Project Structure / โครงสร้างโปรเจค
 
 ```
 backend/
 ├── src/
-│   ├── config/              # การตั้งค่าต่างๆ
-│   │   ├── cloudinary.js    # Cloudinary configuration
-│   │   └── mongodb.js       # MongoDB connection
-│   │
+│   ├── config/              # Configurations (Cloudinary, MongoDB)
 │   ├── controllers/         # Business logic handlers
-│   │   ├── cartController.js
-│   │   ├── orderController.js
-│   │   ├── productController.js
-│   │   └── userController.js
-│   │
-│   ├── middlewares/         # Express middlewares
-│   │   ├── authMiddleware.js  # JWT authentication
-│   │   └── multer.js         # File upload handling
-│   │
+│   ├── middlewares/         # Express middlewares (Auth, Multer)
 │   ├── models/              # MongoDB schemas
-│   │   ├── orderModel.js
-│   │   ├── productModel.js
-│   │   └── userModel.js
-│   │
 │   ├── routes/              # API route definitions
-│   │   ├── cartRoute.js
-│   │   ├── orderRoute.js
-│   │   ├── productRoute.js
-│   │   └── userRoute.js
-│   │
-│   ├── services/            # Service layer (database operations)
-│   │   ├── cartService.js
-│   │   ├── orderService.js
-│   │   ├── productService.js
-│   │   └── userService.js
-│   │
+│   ├── services/            # Service layer (Database operations)
 │   ├── validators/          # Input validation
-│   │   ├── cartValidator.js
-│   │   ├── orderValidator.js
-│   │   ├── productValidator.js
-│   │   └── userValidator.js
-│   │
 │   └── utills/              # Utility functions
-│       ├── cloudinaryUtil.js  # Cloudinary helpers
-│       ├── constants.js      # Constants & messages
-│       └── tokenUtil.js      # JWT helpers
-│
 ├── .env                     # Environment variables
 ├── .gitignore
 ├── package.json
@@ -108,41 +77,35 @@ backend/
 └── README.md
 ```
 
-## 🚀 การติดตั้ง
+## Installation / การติดตั้ง
 
-### ข้อกำหนดเบื้องต้น
+### Prerequisites / ข้อกำหนดเบื้องต้น
 
-- Node.js (v14 ขึ้นไป)
-- MongoDB (Local หรือ MongoDB Atlas)
-- บัญชี Cloudinary (สำหรับจัดเก็บรูปภาพ)
-- บัญชี Stripe (สำหรับการชำระเงิน)
+- Node.js (v14+)
+- MongoDB (Local or Atlas)
+- Cloudinary Account
+- Stripe Account
 
-### ขั้นตอนการติดตั้ง
+### Steps / ขั้นตอนการติดตั้ง
 
-1. Clone repository
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd ecommerce/backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file (see below).
+4. Run the project:
+   ```bash
+   npm run dev
+   ```
 
-```bash
-git clone <repository-url>
-cd phamacy-e/backend
-```
+## Environment Variables / การตั้งค่า Environment Variables
 
-2. ติดตั้ง dependencies
-
-```bash
-npm install
-```
-
-3. สร้างไฟล์ `.env` (ดูตัวอย่างด้านล่าง)
-
-4. รันโปรเจค
-
-```bash
-npm run dev
-```
-
-## ⚙️ การตั้งค่า Environment Variables
-
-สร้างไฟล์ `.env` ใน root directory ของ backend:
+Create a `.env` file in the root directory / สร้างไฟล์ `.env` ในโฟลเดอร์หลัก:
 
 ```env
 # Server Configuration
@@ -167,7 +130,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
 ```
 
-## 🏃 การรันโปรเจค
+## Running the Project / การรันโปรเจค
 
 ### Development Mode (hot reload)
 
@@ -181,101 +144,72 @@ npm run dev
 npm start
 ```
 
-Server จะรันที่: `http://localhost:4000`
+Server runs at / เซิร์ฟเวอร์ทำงานที่: `http://localhost:4000`
 
-## 📡 API Endpoints
+## API Endpoints
 
-### 🔐 User Routes (`/api/v1/user`)
+### User Routes (`/api/v1/user`)
 
-| Method | Endpoint       | Description        | Auth Required |
-| ------ | -------------- | ------------------ | ------------- |
-| POST   | `/register`    | สมัครสมาชิกใหม่    | ❌            |
-| POST   | `/login`       | เข้าสู่ระบบ        | ❌            |
-| POST   | `/admin`       | Admin login        | ❌            |
-| GET    | `/profile`     | ดูข้อมูลโปรไฟล์    | ✅ User       |
-| PUT    | `/update-role` | อัพเดทสิทธิ์ผู้ใช้ | ✅ Admin      |
+| Method | Endpoint       | Description       | Auth Required |
+| ------ | -------------- | ----------------- | ------------- |
+| POST   | `/register`    | Register new user | No            |
+| POST   | `/login`       | User login        | No            |
+| POST   | `/admin`       | Admin login       | No            |
+| GET    | `/profile`     | Get user profile  | Yes (User)    |
+| PUT    | `/update-role` | Update user role  | Yes (Admin)   |
 
-### 📦 Product Routes (`/api/v1/product`)
+### Product Routes (`/api/v1/product`)
 
-| Method | Endpoint  | Description           | Auth Required |
-| ------ | --------- | --------------------- | ------------- |
-| POST   | `/add`    | เพิ่มสินค้าใหม่       | ✅ Admin      |
-| GET    | `/list`   | ดูรายการสินค้าทั้งหมด | ❌            |
-| POST   | `/remove` | ลบสินค้า              | ✅ Admin      |
-| POST   | `/single` | ดูรายละเอียดสินค้า    | ❌            |
+| Method | Endpoint  | Description               | Auth Required |
+| ------ | --------- | ------------------------- | ------------- |
+| POST   | `/add`    | Add new product           | Yes (Admin)   |
+| GET    | `/list`   | List all products         | No            |
+| POST   | `/remove` | Remove product            | Yes (Admin)   |
+| POST   | `/single` | Get single product detail | No            |
 
-### 🛒 Cart Routes (`/api/v1/cart`)
+### Cart Routes (`/api/v1/cart`)
 
-| Method | Endpoint       | Description         | Auth Required |
-| ------ | -------------- | ------------------- | ------------- |
-| POST   | `/get`         | ดูตะกร้าสินค้า      | ✅ User       |
-| POST   | `/add`         | เพิ่มสินค้าลงตะกร้า | ✅ User       |
-| POST   | `/update`      | อัพเดทจำนวนสินค้า   | ✅ User       |
-| DELETE | `/delete-cart` | ลบสินค้าจากตะกร้า   | ✅ User       |
+| Method | Endpoint       | Description      | Auth Required |
+| ------ | -------------- | ---------------- | ------------- |
+| POST   | `/get`         | View cart        | Yes (User)    |
+| POST   | `/add`         | Add to cart      | Yes (User)    |
+| POST   | `/update`      | Update quantity  | Yes (User)    |
+| DELETE | `/delete-cart` | Remove from cart | Yes (User)    |
 
-### 🛍️ Order Routes (`/api/v1/order`)
+### Order Routes (`/api/v1/order`)
 
-| Method | Endpoint        | Description                  | Auth Required |
-| ------ | --------------- | ---------------------------- | ------------- |
-| POST   | `/list`         | ดูประวัติคำสั่งซื้อของตัวเอง | ✅ User       |
-| POST   | `/status`       | อัพเดทสถานะคำสั่งซื้อ        | ✅ Admin      |
-| GET    | `/all-orders`   | ดูคำสั่งซื้อทั้งหมด          | ✅ Admin      |
-| POST   | `/place`        | สั่งซื้อ (Cash on Delivery)  | ✅ User       |
-| POST   | `/stripe`       | สั่งซื้อ (Stripe Payment)    | ✅ User       |
-| POST   | `/verifyStripe` | ยืนยันการชำระเงิน Stripe     | ✅ User       |
+| Method | Endpoint        | Description           | Auth Required |
+| ------ | --------------- | --------------------- | ------------- |
+| POST   | `/list`         | User order history    | Yes (User)    |
+| POST   | `/status`       | Update order status   | Yes (Admin)   |
+| GET    | `/all-orders`   | View all orders       | Yes (Admin)   |
+| POST   | `/place`        | Place order (COD)     | Yes (User)    |
+| POST   | `/stripe`       | Place order (Stripe)  | Yes (User)    |
+| POST   | `/verifyStripe` | Verify Stripe payment | Yes (User)    |
 
-## 🔒 Authentication
+## File Management / การจัดการไฟล์
 
-API ใช้ JWT (JSON Web Token) สำหรับการยืนยันตัวตน
+### Product Image Upload / การอัพโหลดรูปภาพสินค้า
 
-### การส่ง Token
-
-ส่ง token ผ่าน Header ในรูปแบบใดรูปแบบหนึ่ง:
-
-```
-Authorization: Bearer <your_jwt_token>
-```
-
-หรือ
-
-```
-token: <your_jwt_token>
-```
-
-### User Roles
-
-- **User**: ผู้ใช้ทั่วไป (สามารถซื้อสินค้า, จัดการตะกร้า)
-- **Admin**: ผู้ดูแลระบบ (สามารถจัดการสินค้า, คำสั่งซื้อทั้งหมด)
-
-## 📤 การจัดการไฟล์
-
-### การอัพโหลดรูปภาพสินค้า
-
+Use Multer for handling files and Cloudinary for storage.
 ใช้ Multer สำหรับรับไฟล์และ Cloudinary สำหรับจัดเก็บ
 
-**Endpoint:** `POST /api/v1/product/add`
+Endpoint: `POST /api/v1/product/add`
 
-**Form Data:**
+Form Data:
 
-- `image1`, `image2`, `image3`, `image4` - ไฟล์รูปภาพ
-- `name` - ชื่อสินค้า
-- `description` - รายละเอียด
-- `price` - ราคา
-- `category` - หมวดหมู่
-- `subCategory` - หมวดหมู่ย่อย
-- `sizes` - ขนาดที่มี (JSON array)
-- `bestseller` - สินค้าขายดี (true/false)
+- `image1`, `image2`, `image3`, `image4` - Image files
+- `name` - Product name / ชื่อสินค้า
+- `description` - Details / รายละเอียด
+- `price` - Price / ราคา
+- `category` - Category / หมวดหมู่
+- `subCategory` - Sub-category / หมวดหมู่ย่อย
+- `sizes` - Available sizes (JSON array) / ขนาดข้อมูล JSON array
+- `bestseller` - Bestseller status / สินค้าขายดี
 
-## 🧪 การทดสอบ API
+## Response Format / รูปแบบการตอบกลับ
 
-แนะนำให้ใช้:
-
-- **Postman** - สำหรับทดสอบ API
-- **ไฟล์ Mock Data** - ดู `CART_API_MOCK_DATA.md` สำหรับตัวอย่างข้อมูล
-
-## 📝 Response Format
-
-### Success Response
+### Success Response / เมื่อดำเนินการสำเร็จ
 
 ```json
 {
@@ -285,7 +219,7 @@ token: <your_jwt_token>
 }
 ```
 
-### Error Response
+### Error Response / เมื่อเกิดข้อผิดพลาด
 
 ```json
 {
@@ -294,22 +228,10 @@ token: <your_jwt_token>
 }
 ```
 
-## 🤝 Contributing
-
-1. Fork โปรเจค
-2. สร้าง Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit การเปลี่ยนแปลง (`git commit -m 'Add some AmazingFeature'`)
-4. Push ไปยัง Branch (`git push origin feature/AmazingFeature`)
-5. เปิด Pull Request
-
-## 📄 License
+## License
 
 ISC
 
-## 👨‍💻 Author
+## Author
 
 Your Name
-
----
-
-**หมายเหตุ:** อย่าลืม `.gitignore` ไฟล์ `.env` เพื่อความปลอดภัยของข้อมูลสำคัญ

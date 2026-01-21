@@ -1,4 +1,4 @@
-// ตรวจสอบข้อมูลสินค้า
+// validate product input
 const validateProductInput = (
   name,
   description,

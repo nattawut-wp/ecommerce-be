@@ -11,6 +11,7 @@ import {
 } from "../validators/cartValidator.js";
 import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utills/constants.js";
 
+// get cart
 const getCartController = async (req, res) => {
   try {
     const userId = req.userId;
@@ -28,6 +29,7 @@ const getCartController = async (req, res) => {
   }
 };
 
+// add to cart
 const addToCartController = async (req, res) => {
   try {
     const { itemId, size } = req.body;
@@ -45,6 +47,7 @@ const addToCartController = async (req, res) => {
   }
 };
 
+// update cart
 const updateCartController = async (req, res) => {
   try {
     const { itemId, size, quantity } = req.body;
@@ -62,6 +65,7 @@ const updateCartController = async (req, res) => {
   }
 };
 
+// delete from cart
 const deleteFromCartController = async (req, res) => {
   try {
     const { itemId, size } = req.body;

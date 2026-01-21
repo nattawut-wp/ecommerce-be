@@ -8,6 +8,7 @@ import {
 } from "../controllers/cartController.js";
 
 const cartRouter = express.Router();
+// cart routes
 cartRouter.get("/get-cart", authUser, getCartController);
 cartRouter.post("/add-cart", authUser, addToCartController);
 cartRouter.post("/update-cart", authUser, updateCartController);

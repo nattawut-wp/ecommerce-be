@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 
+// extract token from headers
 const extractToken = (headers) => {
   // ตรวจสอบ custom token header ก่อน
   if (headers.token) {
@@ -13,11 +14,10 @@ const extractToken = (headers) => {
     // ตัด "Bearer " ออกและเอาเฉพาะ token (7 ตัวอักษรแรก = "Bearer ")
     return authHeader.substring(7);
   }
-
-  // ไม่พบ token
   return null;
 };
 
+// auth user
 const authUser = async (req, res, next) => {
   try {
     // 1. ดึง token จาก headers
@@ -91,6 +91,7 @@ const authUser = async (req, res, next) => {
   }
 };
 
+// auth admin
 const authAdmin = async (req, res, next) => {
   try {
     // ใช้ logic ของ authUser โดยตรงเพื่อหลีกเลี่ยงการเรียกซ้ำซ้อน
@@ -112,8 +113,8 @@ const authAdmin = async (req, res, next) => {
         message: "Invalid token - No user ID found",
       });
     }
-
-    const user = await userModel.findById(userId).select("-password");
+    // find user
+    const user = await userModel.findById(userId).select("password");
 
     if (!user) {
       return res.status(401).json({

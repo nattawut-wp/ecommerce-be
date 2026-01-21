@@ -55,7 +55,7 @@ const verifyStripe = async (req, res) => {
         message: RESPONSE_MESSAGES.ORDER_ID_REQUIRED,
       });
     }
-
+    // verify stripe
     const result = await verifyStripeService(orderId, success, userId);
 
     res.json({ success: result.verified });
@@ -65,6 +65,7 @@ const verifyStripe = async (req, res) => {
   }
 };
 
+// user orders
 const userOrders = async (req, res) => {
   try {
     const userId = req.userId;
@@ -85,6 +86,7 @@ const userOrders = async (req, res) => {
   }
 };
 
+// all orders
 const allOrders = async (req, res) => {
   try {
     const orders = await allOrdersService();
@@ -96,6 +98,7 @@ const allOrders = async (req, res) => {
   }
 };
 
+// update status
 const updateStatus = async (req, res) => {
   try {
     const { orderId, status } = req.body;
@@ -116,6 +119,7 @@ const updateStatus = async (req, res) => {
   }
 };
 
+// get stripe stats for admin
 const getStripeStats = async (req, res) => {
   try {
     const stats = await getStripeDashboardStats();

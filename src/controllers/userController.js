@@ -10,6 +10,7 @@ import {
 import { createToken, createAdminToken } from "../utills/tokenUtil.js";
 import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utills/constants.js";
 
+// register user
 const registerUserController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -39,6 +40,7 @@ const registerUserController = async (req, res) => {
   }
 };
 
+// login user
 const loginUserController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -67,6 +69,7 @@ const loginUserController = async (req, res) => {
   }
 };
 
+// verify admin
 const verifyAdminController = async (req, res) => {
   try {
     const { email, password } = req.body;
