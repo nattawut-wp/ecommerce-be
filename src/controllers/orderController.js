@@ -11,28 +11,28 @@ import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utills/constants.js";
 
 const placeOrderStripe = async (req, res) => {
   try {
-    // 1. ดึงข้อมูลจาก request
+    // 1. get data from request
     const { items, amount, address } = req.body;
     const userId = req.userId;
     const origin =
       req.headers.origin || req.headers.referer || "http://localhost:3000";
 
-    // 2. Validate ข้อมูลที่จำเป็น
+    // 2. Validate required data
     const validation = validateOrderInput(userId, items, amount, address);
     if (!validation.isValid) {
       return res.json({ success: false, message: validation.errors[0] });
     }
 
-    // 3. เรียก Service เพื่อสร้างคำสั่งซื้อ
+    // 3. call service to create order
     const { orderId, sessionUrl } = await placeOrderStripeService(
       userId,
       items,
       amount,
       address,
-      origin
+      origin,
     );
 
-    // 4. Return success พร้อม session URL
+    // 4. Return success with session URL
     res.json({ success: true, orderId, session_url: sessionUrl });
   } catch (error) {
     console.log(error);
@@ -48,7 +48,7 @@ const verifyStripe = async (req, res) => {
   const userId = req.userId;
 
   try {
-    // 1. ตรวจสอบข้อมูลที่จำเป็น
+    // 1. check required data
     if (!orderId || !userId) {
       return res.json({
         success: false,
