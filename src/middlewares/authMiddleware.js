@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 
-// extract token from headers
 const extractToken = (headers) => {
-  // ตรวจสอบ custom token header ก่อน
   if (headers.token) {
     return headers.token;
   }
@@ -46,7 +44,7 @@ const authUser = async (req, res, next) => {
     }
 
     // 6. ดึงข้อมูลผู้ใช้จาก database (ไม่รวม password)
-    const user = await userModel.findById(userId).select("-password");
+    const user = await userModel.findById(userId).select("password");
 
     // 7. ตรวจสอบว่าพบผู้ใช้ในระบบหรือไม่
     if (!user) {
@@ -113,9 +111,9 @@ const authAdmin = async (req, res, next) => {
         message: "Invalid token - No user ID found",
       });
     }
-    // find user
-    const user = await userModel.findById(userId).select("password");
 
+    // find user
+    const user = await userModel.findById(userId).select("role");
     if (!user) {
       return res.status(401).json({
         success: false,

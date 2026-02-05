@@ -1,5 +1,5 @@
 import orderModel from "../models/orderModel.js";
-import { RESPONSE_MESSAGES } from "../utills/constants.js";
+import { RESPONSE_MESSAGES } from "../utils/constants.js";
 import userModel from "../models/userModel.js";
 import Stripe from "stripe";
 
@@ -16,7 +16,7 @@ const placeOrderStripeService = async (
   items,
   amount,
   address,
-  origin
+  origin,
 ) => {
   try {
     const orderData = {
@@ -75,9 +75,9 @@ const placeOrderStripeService = async (
 const verifyStripeService = async (orderId, success, userId) => {
   try {
     if (success === "true") {
-      // 1. update payment status in order
+      //  update payment status in order
       await orderModel.findByIdAndUpdate(orderId, { payment: true });
-      // 2. clear user cart
+      //  clear user cart
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
       return { verified: true };
     } else {
@@ -114,12 +114,12 @@ const userOrdersService = async (userId) => {
 // update order status for admin
 const updateOrderStatusService = async (orderId, status) => {
   try {
-    // 1. find order
+    // find order
     const order = await orderModel.findById(orderId);
     if (!order) {
       throw new Error(RESPONSE_MESSAGES.ORDER_NOT_FOUND);
     }
-    // 2. update order status
+    //  update order status
     order.status = status;
     await order.save();
     return order;
@@ -131,15 +131,15 @@ const updateOrderStatusService = async (orderId, status) => {
 // get stripe dashboard stats
 const getStripeDashboardStats = async () => {
   try {
-    // 1. get available balance from stripe ดึงยอดเงินคงเหลือจาก stripe
+    //  get available balance from stripe ดึงยอดเงินคงเหลือจาก stripe
     const balance = await stripe.balance.retrieve();
     const availableBalance = balance.available[0].amount / 100; // convert to baht แปลงเป็นบาท
 
-    // 2. calculate total sales from orders that have been paid คำนวณยอดขายรวมจากคำสั่งซื้อที่ชำระเงินแล้ว
+    //  calculate total sales from orders that have been paid คำนวณยอดขายรวมจากคำสั่งซื้อที่ชำระเงินแล้ว
     const orders = await orderModel.find({ payment: true });
     const totalSales = orders.reduce((sum, order) => sum + order.amount, 0);
 
-    // 3. count number of orders that are pending (not sent) นับจำนวนคำสั่งซื้อที่ยังไม่ส่ง
+    //  count number of orders that are pending (not sent) นับจำนวนคำสั่งซื้อที่ยังไม่ส่ง
     const pendingOrders = await orderModel.countDocuments({
       status: { $ne: "Delivered" },
     });
