@@ -1,5 +1,5 @@
 import produtModel from "../models/productModel.js";
-import { uploadImages } from "../utills/cloudinaryUtil.js";
+import { uploadImages } from "../utils/cloudinaryUtil.js";
 
 // add product service
 const addProductService = async (productData, images) => {

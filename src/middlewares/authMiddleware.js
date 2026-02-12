@@ -1,12 +1,10 @@
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 
+// ดึง token จาก headers (รองรับทั้ง custom header และ Bearer token)
 const extractToken = (headers) => {
-  if (headers.token) {
-    return headers.token;
-  }
+  if (headers.token) return headers.token;
 
-  // ตรวจสอบ Authorization header (รองรับทั้ง lowercase และ uppercase)
   const authHeader = headers.authorization || headers.Authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
     // ตัด "Bearer " ออกและเอาเฉพาะ token (7 ตัวอักษรแรก = "Bearer ")
@@ -18,10 +16,10 @@ const extractToken = (headers) => {
 // auth user
 const authUser = async (req, res, next) => {
   try {
-    // 1. ดึง token จาก headers
+    //  ดึง token จาก headers
     const token = extractToken(req.headers);
 
-    // 2. ตรวจสอบว่ามี token หรือไม่
+    // ตรวจสอบว่ามี token หรือไม่
     if (!token) {
       return res.status(401).json({
         success: false,
@@ -29,10 +27,10 @@ const authUser = async (req, res, next) => {
       });
     }
 
-    // 3. Verify token และ decode ข้อมูล
+    //  Verify token และ decode ข้อมูล
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 4. ดึง user ID จาก decoded token (รองรับหลายรูปแบบ)
+    //  ดึง user ID จาก decoded token (รองรับหลายรูปแบบ)
     const userId = decoded.id || decoded._id || decoded.userId;
 
     // 5. ตรวจสอบว่ามี user ID ใน token หรือไม่
@@ -44,7 +42,7 @@ const authUser = async (req, res, next) => {
     }
 
     // 6. ดึงข้อมูลผู้ใช้จาก database (ไม่รวม password)
-    const user = await userModel.findById(userId).select("password");
+    const user = await userModel.findById(userId).select("-password");
 
     // 7. ตรวจสอบว่าพบผู้ใช้ในระบบหรือไม่
     if (!user) {
@@ -53,11 +51,9 @@ const authUser = async (req, res, next) => {
         message: "User not found",
       });
     }
-
     // 8. แนบข้อมูลผู้ใช้เข้ากับ request object เพื่อให้ controller ใช้งาน
     req.user = user;
     req.userId = userId;
-
     // 9. ผ่านการตรวจสอบ ไปต่อที่ controller
     next();
   } catch (error) {
@@ -92,51 +88,24 @@ const authUser = async (req, res, next) => {
 // auth admin
 const authAdmin = async (req, res, next) => {
   try {
-    // ใช้ logic ของ authUser โดยตรงเพื่อหลีกเลี่ยงการเรียกซ้ำซ้อน
-    const token = extractToken(req.headers);
-
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Not Authorized - Please login",
-      });
+    // ตรวจสอบว่าผ่าน authUser มาหรือยัง
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authenticated" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id || decoded._id || decoded.userId;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token - No user ID found",
-      });
+    // ตรวจสอบ Role
+    if (req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access Denied - Admin only" });
     }
 
-    // find user
-    const user = await userModel.findById(userId).select("role");
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Access Denied - Admin access required",
-      });
-    }
-
-    req.user = user;
-    req.userId = userId;
     next();
   } catch (error) {
-    console.error("Admin authentication error:", error.message);
-    return res.status(401).json({
-      success: false,
-      message: "Authorization failed",
-    });
+    console.log("Admin Auth Error:", error.message);
+    res.status(401).json({ success: false, message: "Authorization failed" });
   }
 };
 

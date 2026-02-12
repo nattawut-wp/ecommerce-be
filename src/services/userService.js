@@ -1,6 +1,6 @@
 import userModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
-import { RESPONSE_MESSAGES } from "../utills/constants.js";
+import { RESPONSE_MESSAGES } from "../utils/constants.js";
 
 // register user
 const registerUserService = async (name, email, password) => {

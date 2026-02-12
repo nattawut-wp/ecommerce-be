@@ -4,7 +4,7 @@ import {
   getProductByIdService,
   deleteProductService,
 } from "../services/productService.js";
-import { HTTP_STATUS } from "../utills/constants.js";
+import { HTTP_STATUS } from "../utils/constants.js";
 import { validateProductInput } from "../validators/productValidator.js";
 
 // add product
@@ -17,7 +17,7 @@ const addProductController = async (req, res) => {
       price,
       category,
       subCategory,
-      sizes
+      sizes,
     );
 
     if (!validation.isValid) {

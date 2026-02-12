@@ -7,8 +7,8 @@ import {
   loginUserService,
   verifyAdminService,
 } from "../services/userService.js";
-import { createToken, createAdminToken } from "../utills/tokenUtil.js";
-import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utills/constants.js";
+import { createToken, createAdminToken } from "../utils/tokenUtil.js";
+import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utils/constants.js";
 
 // register user
 const registerUserController = async (req, res) => {

@@ -9,7 +9,7 @@ import {
   validateCartInput,
   validateUpdateCartInput,
 } from "../validators/cartValidator.js";
-import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utills/constants.js";
+import { HTTP_STATUS, RESPONSE_MESSAGES } from "../utils/constants.js";
 
 // get cart
 const getCartController = async (req, res) => {

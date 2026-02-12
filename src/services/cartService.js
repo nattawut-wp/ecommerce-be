@@ -1,5 +1,5 @@
 import userModel from "../models/userModel.js";
-import { RESPONSE_MESSAGES } from "../utills/constants.js";
+import { RESPONSE_MESSAGES } from "../utils/constants.js";
 
 // get user's cart data
 const getCartService = async (userId) => {
